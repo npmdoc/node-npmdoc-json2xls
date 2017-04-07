@@ -1,0 +1,173 @@
+<div class="apidocDiv">
+<style>
+/*csslint
+*/
+.apidocDiv {
+    background: #fff;
+    font-family: Arial, Helvetica, sans-serif;
+}
+.apidocDiv a[href] {
+    color: #33f;
+    font-weight: bold;
+    text-decoration: none;
+}
+.apidocDiv a[href]:hover {
+    text-decoration: underline;
+}
+.apidocCodeCommentSpan {
+    background: #bbf;
+    color: #000;
+    display: block;
+}
+.apidocCodeKeywordSpan {
+    color: #d00;
+    font-weight: bold;
+}
+.apidocCodePre {
+    background: #eef;
+    border: 1px solid;
+    color: #777;
+    padding: 5px;
+    white-space: pre-wrap;
+}
+.apidocFooterDiv {
+    margin-top: 20px;
+    text-align: center;
+}
+.apidocModuleLi {
+    margin-top: 10px;
+}
+.apidocSectionDiv {
+    border-top: 1px solid;
+    margin-top: 20px;
+}
+.apidocSignatureSpan {
+    color: #777;
+    font-weight: bold;
+}
+</style>
+<h1>api documentation for
+    <a
+
+        href="https://github.com/rikkertkoppes/json2xls#readme"
+
+    >json2xls (v0.1.2)</a>
+</h1>
+<h4>canonically transform json to an excel document</h4>
+<div class="apidocSectionDiv"><a
+    href="#apidoc.tableOfContents"
+    id="apidoc.tableOfContents"
+><h1>table of contents</h1></a><ol>
+
+    <li class="apidocModuleLi"><a href="#apidoc.module.json2xls">module json2xls</a><ol>
+
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.json2xls.middleware">
+            function <span class="apidocSignatureSpan">json2xls.</span>middleware
+            <span class="apidocSignatureSpan">(req, res, next)</span>
+            </a>
+
+        </li>
+
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.json2xls.prepareJson">
+            function <span class="apidocSignatureSpan">json2xls.</span>prepareJson
+            <span class="apidocSignatureSpan">(json, config)</span>
+            </a>
+
+        </li>
+
+    </ol></li>
+
+</ol></div>
+
+<div class="apidocSectionDiv">
+<h1><a href="#apidoc.module.json2xls" id="apidoc.module.json2xls">module json2xls</a></h1>
+
+
+    <h2>
+        <a href="#apidoc.element.json2xls.middleware" id="apidoc.element.json2xls.middleware">
+        function <span class="apidocSignatureSpan">json2xls.</span>middleware
+        <span class="apidocSignatureSpan">(req, res, next)</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">middleware = function (req, res, next) {
+    res.xls = function(fn,data,config) {
+        var xls = transform(data,config);
+        res.setHeader(&#x27;Content-Type&#x27;, &#x27;application/vnd.openxmlformats&#x27;);
+        res.setHeader(&#x22;Content-Disposition&#x22;, &#x22;attachment; filename=&#x22; + fn);
+        res.end(xls, &#x27;binary&#x27;);
+    };
+    next();
+}</pre></li>
+    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    </ul>
+
+
+
+    <h2>
+        <a href="#apidoc.element.json2xls.prepareJson" id="apidoc.element.json2xls.prepareJson">
+        function <span class="apidocSignatureSpan">json2xls.</span>prepareJson
+        <span class="apidocSignatureSpan">(json, config)</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">prepareJson = function (json, config) {
+    var res = {};
+    var conf = config||{};
+    var jsonArr = [].concat(json);
+    var fields = conf.fields || Object.keys(jsonArr[0]||{});
+    var types = [];
+    if (!(fields instanceof Array)) {
+        types = Object.keys(fields).map(function(key) {
+            return fields[key];
+        });
+        fields = Object.keys(fields);
+    }
+    //cols
+    res.cols = fields.map(function(key,i) {
+        return {
+            caption: key,
+            type: getType(jsonArr[0][key],types[i]),
+            beforeCellWrite: function(row, cellData, eOpt){
+                eOpt.cellType = getType(cellData,types[i]);
+                return cellData;
+            }
+        };
+    });
+    //rows
+    res.rows = jsonArr.map(function(row) {
+        return fields.map(function(key) {
+            var value = getByString(row,key);
+            //stringify objects
+            if(value &#x26;&#x26; value.constructor == Object) value = JSON.stringify(value);
+            //replace illegal xml characters with a square
+            //see http://www.w3.org/TR/xml/#charsets
+            //#x9 | #xA | #xD | [#x20-#xD7FF] | [#xE000-#xFFFD] | [#x10000-#x10FFFF]
+            if (typeof value === &#x27;string&#x27;) {
+                value = value.replace(/[^\u0009\u000A\u000D\u0020-\uD7FF\uE000-\uFFFD\u10000-\u10FFFF]/g,&#x27;&#x27;);
+            }
+            return value;
+        });
+    });
+    //add style xml if given
+    if (conf.style) {
+        res.stylesXmlFile = conf.style;
+    }
+    return res;
+}</pre></li>
+    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    </ul>
+
+
+</div>
+
+<div class="apidocFooterDiv">
+    [ this document was created with
+    <a href="https://github.com/kaizhu256/node-utility2" target="_blank">utility2</a>
+    ]
+</div>
+</div>
