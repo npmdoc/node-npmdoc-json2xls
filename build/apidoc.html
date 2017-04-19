@@ -63,6 +63,15 @@
 
         <li>
 
+            <a class="apidocElementLiA" href="#apidoc.element.json2xls.json2xls">
+            function <span class="apidocSignatureSpan"></span>json2xls
+            <span class="apidocSignatureSpan">(json, config)</span>
+            </a>
+
+        </li>
+
+        <li>
+
             <a class="apidocElementLiA" href="#apidoc.element.json2xls.middleware">
             function <span class="apidocSignatureSpan">json2xls.</span>middleware
             <span class="apidocSignatureSpan">(req, res, next)</span>
@@ -85,6 +94,23 @@
 
 <div class="apidocSectionDiv">
 <h1><a href="#apidoc.module.json2xls" id="apidoc.module.json2xls">module json2xls</a></h1>
+
+
+    <h2>
+        <a href="#apidoc.element.json2xls.json2xls" id="apidoc.element.json2xls.json2xls">
+        function <span class="apidocSignatureSpan"></span>json2xls
+        <span class="apidocSignatureSpan">(json, config)</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">json2xls = function (json, config) {
+    var conf = transform.prepareJson(json,config);
+    var result = nodeExcel.execute(conf);
+    return result;
+}</pre></li>
+    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    </ul>
+
 
 
     <h2>
